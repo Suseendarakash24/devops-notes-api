@@ -1,0 +1,49 @@
+name: CI/CD Pipeline
+
+# When to run this pipeline?
+on:
+  push:
+    branches: [ "main" ]  # main branch la push pannumbothu run aagum
+
+# Jobs (tasks to run)
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest  # GitHub's server la run aagum (Ubuntu OS)
+    
+    steps:
+    # Step 1: Download your code from GitHub
+    - uses: actions/checkout@v3
+    
+    # Step 2: Install Python
+    - name: Set up Python
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.9'
+        
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest  # Testing tool
+        
+    # Step 4: Run Tests (if you have test files)
+    - name: Run Tests
+      run: pytest
+      continue-on-error: true  # Test illana skip pannidum
+      
+    # Step 5: Build Docker Image
+    - name: Build Docker Image
+      run: docker build -t my-notes-api .
+      
+    # Step 6: Login to Docker Hub (Optional - for storing images)
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+      if: false  # Disable for now
+      
+    # Step 7: Deploy to Cloud
+    - name: Deploy
+      run: echo "Deployment step - Connect to Render/AWS here"

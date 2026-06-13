@@ -3,8 +3,19 @@ from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
-# In-memory database for simplicity (Use PostgreSQL in real DevOps)
-notes = []
+# ===== ADD THIS ROOT ROUTE =====
+@app.route('/')
+def home():
+    return jsonify({
+        "message": "Welcome to DevOps Notes API!",
+        "status": "running",
+        "endpoints": {
+            "health": "/health",
+            "get_notes": "/notes (GET)",
+            "add_note": "/notes (POST)"
+        }
+    })
+# ===============================
 
 @app.route('/health', methods=['GET'])
 def health_check():

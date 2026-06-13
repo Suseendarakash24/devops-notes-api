@@ -8,14 +8,8 @@ import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_super_secret_key_change_this_in_production')
 
-# ===== MySQL Database Configuration =====
-DB_USER = os.environ.get('DB_USER', 'root')
-DB_PASS = os.environ.get('DB_PASS', '2428')  # Your MySQL password
-DB_HOST = os.environ.get('DB_HOST', 'localhost')
-DB_NAME = os.environ.get('DB_NAME', 'notes_app_db')
-
-# MySQL connection string using PyMySQL driver
-app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}/{DB_NAME}?charset=utf8mb4'
+# ===== SQLite Database Configuration =====
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///notes.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -43,7 +37,7 @@ class Note(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- Templates (Same as before - no changes needed) ---
+# --- Templates ---
 LOGIN_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">

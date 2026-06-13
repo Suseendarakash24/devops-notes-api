@@ -1,4 +1,4 @@
-# app.py
+import os
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -21,4 +21,6 @@ def add_note():
     return jsonify({"message": "Note added!", "note": data}), 201
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # Dynamically get the port from Render's environment variable
+    port = int(os.environ.get('PORT', 5000)) 
+    app.run(host='0.0.0.0', port=port)

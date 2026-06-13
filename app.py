@@ -6,8 +6,17 @@ from datetime import datetime
 import os
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_super_secret_key_change_this_in_production'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///notes.db'  # Change to MySQL for production
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_super_secret_key_change_this_in_production')
+
+# ===== MySQL Database Configuration =====
+DB_HOST = os.environ.get('DB_HOST', 'localhost')
+DB_PORT = os.environ.get('DB_PORT', '3306')  # Add this
+DB_USER = os.environ.get('DB_USER', 'root')
+DB_PASS = os.environ.get('DB_PASS', '2428')
+DB_NAME = os.environ.get('DB_NAME', 'notes_app_db')
+
+# Connection string with port
+app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}?charset=utf8mb4'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -35,7 +44,7 @@ class Note(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- Templates ---
+# --- Templates (Same as before - no changes needed) ---
 LOGIN_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -297,37 +306,23 @@ DASHBOARD_TEMPLATE = """
     </div>
 
     <script>
-        // Search functionality
         function searchNotes() {
             const input = document.getElementById('searchInput').value.toLowerCase();
             const notes = document.querySelectorAll('.note-item');
-            
             notes.forEach(note => {
                 const title = note.getAttribute('data-title');
                 const content = note.getAttribute('data-content');
-                
-                if (title.includes(input) || content.includes(input)) {
-                    note.style.display = 'block';
-                } else {
-                    note.style.display = 'none';
-                }
+                note.style.display = (title.includes(input) || content.includes(input)) ? 'block' : 'none';
             });
         }
 
-        // Category filter
         function filterCategory(category) {
             const notes = document.querySelectorAll('.note-item');
             const buttons = document.querySelectorAll('.filter-btn');
-            
             buttons.forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            
             notes.forEach(note => {
-                if (category === 'all' || note.getAttribute('data-category') === category) {
-                    note.style.display = 'block';
-                } else {
-                    note.style.display = 'none';
-                }
+                note.style.display = (category === 'all' || note.getAttribute('data-category') === category) ? 'block' : 'none';
             });
         }
     </script>
@@ -427,7 +422,6 @@ def logout():
 def dashboard():
     notes = Note.query.filter_by(user_id=current_user.id).order_by(Note.pinned.desc(), Note.created_at.desc()).all()
     
-    # Statistics
     total_notes = len(notes)
     pinned_count = sum(1 for note in notes if note.pinned)
     categories = list(set(note.category for note in notes))

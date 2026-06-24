@@ -95,7 +95,7 @@ push to main
 
 ## Running it locally
 
-**With Docker (recommended, closer to how it runs in CI):**
+**With Docker:**
 ```bash
 docker compose -f docker_compose.yaml up --build
 ```
@@ -122,10 +122,10 @@ Since I needed a real working app to deploy, I built a basic notes manager with:
 ## Things I want to add next
 
 Mostly pipeline-related, since that's what I'm focused on learning:
-- [ ] Add a test step in the pipeline before it builds/deploys (so broken code never gets deployed)
-- [ ] Actually push the built Docker image somewhere (right now it just builds locally in CI and doesn't get used by the deploy step)
-- [ ] Maybe a staging branch before main, so I can test changes before they go live
-- [ ] Switch the Dockerfile to run with Gunicorn instead of the Flask dev server
+- Add a test step in the pipeline before it builds/deploys (so broken code never gets deployed)
+- Actually push the built Docker image somewhere (right now it just builds locally in CI and doesn't get used by the deploy step)
+- Maybe a staging branch before main, so I can test changes before they go live
+- Switch the Dockerfile to run with Gunicorn instead of the Flask dev server
 
 ## Note on secrets
 

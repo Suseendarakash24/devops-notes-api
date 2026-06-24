@@ -8,7 +8,6 @@ import os
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'your_super_secret_key_change_this_in_production')
 
-# ===== SQLite Database Configuration =====
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///notes.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -16,7 +15,7 @@ db = SQLAlchemy(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# --- Database Models ---
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
@@ -37,7 +36,7 @@ class Note(db.Model):
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# --- Templates ---
+
 LOGIN_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -372,7 +371,6 @@ EDIT_TEMPLATE = """
 </html>
 """
 
-# --- Routes ---
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
